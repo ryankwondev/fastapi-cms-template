@@ -1,1 +1,1 @@
-# fastapi-cms-template
+# FastAPI CMS Template
