@@ -23,40 +23,76 @@ async def read_users_me(current_user: User = Depends(get_current_active_user)):
 
 @app.post("/users")
 async def create_user(user: User):
-    pass
+    with Session(engine) as session:
+        session.add(user)
+        session.commit()
+        session.refresh(user)
+        return user
 
 @app.get("/users")
 async def read_users():
-    pass
+    with Session(engine) as session:
+        users = session.exec(select(User)).all()
+        return users
 
 @app.get("/users/{user_id}")
 async def read_user(user_id: int):
-    pass
+    with Session(engine) as session:
+        user = session.get(User, user_id)
+        return user
 
 @app.put("/users/{user_id}")
 async def update_user(user_id: int, user: User):
-    pass
+    with Session(engine) as session:
+        db_user = session.get(User, user_id)
+        db_user.username = user.username
+        db_user.hashed_password = user.hashed_password
+        session.commit()
+        session.refresh(db_user)
+        return db_user
 
 @app.delete("/users/{user_id}")
 async def delete_user(user_id: int):
-    pass
+    with Session(engine) as session:
+        user = session.get(User, user_id)
+        session.delete(user)
+        session.commit()
+        return {"message": "User deleted"}
 
 @app.post("/content")
 async def create_content(content: Content):
-    pass
+    with Session(engine) as session:
+        session.add(content)
+        session.commit()
+        session.refresh(content)
+        return content
 
 @app.get("/content")
 async def read_content():
-    pass
+    with Session(engine) as session:
+        contents = session.exec(select(Content)).all()
+        return contents
 
 @app.get("/content/{content_id}")
 async def read_content(content_id: int):
-    pass
+    with Session(engine) as session:
+        content = session.get(Content, content_id)
+        return content
 
 @app.put("/content/{content_id}")
 async def update_content(content_id: int, content: Content):
-    pass
+    with Session(engine) as session:
+        db_content = session.get(Content, content_id)
+        db_content.title = content.title
+        db_content.body = content.body
+        session.commit()
+        session.refresh(db_content)
+        return db_content
 
 @app.delete("/content/{content_id}")
 async def delete_content(content_id: int):
-    pass
+    with Session(engine) as session:
+        content = session.get(Content, content_id)
+        session.delete(content)
+        session.commit()
+        return {"message": "Content deleted"}
