@@ -44,7 +44,13 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
         token_data = TokenData(username=username)
     except jwt.PyJWTError:
         raise credentials_exception
-    user = get_user(fake_users_db, username=token_data.username)
+    user = get_user(username=token_data.username)
     if user is None:
         raise credentials_exception
     return user
+
+def get_user(username: str):
+    with Session(engine) as session:
+        statement = select(User).where(User.username == username)
+        user = session.exec(statement).first()
+        return user
