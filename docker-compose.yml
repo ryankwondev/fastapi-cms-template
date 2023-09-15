@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  fastapi:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    networks:
+      - fastapi_network
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: fastapi_cms
+      POSTGRES_USER: fastapi
+      POSTGRES_PASSWORD: fastapi
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - fastapi_network
+
+networks:
+  fastapi_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
